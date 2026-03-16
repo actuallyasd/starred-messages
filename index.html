@@ -11,6 +11,23 @@
             --wa-meta: #667781;
         }
 
+        /* Password Overlay Styles */
+        #lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--wa-header); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; font-family: sans-serif;
+        }
+        #password-input {
+            padding: 12px; border-radius: 8px; border: none; margin-top: 20px;
+            width: 200px; text-align: center; font-size: 18px; letter-spacing: 4px;
+        }
+        #unlock-btn {
+            margin-top: 15px; padding: 10px 25px; border-radius: 20px;
+            border: 1px solid white; background: transparent; color: white;
+            cursor: pointer; font-weight: 600;
+        }
+
         body {
             margin: 0; padding: 0;
             background-color: var(--wa-bg);
@@ -18,6 +35,7 @@
             background-blend-mode: overlay;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex; flex-direction: column; align-items: center;
+            display: none; /* Hidden until password is correct */
         }
 
         header {
@@ -38,9 +56,8 @@
             margin: 35px 0 15px 0; text-transform: uppercase;
         }
 
-        /* The Bubble Container for your Screenshots */
         .moment-wrapper {
-            max-width: 90%;
+            max-width: 95%; /* Wider on mobile */
             margin-bottom: 15px;
             opacity: 0;
             transform: translateY(20px);
@@ -48,8 +65,6 @@
         }
 
         .moment-wrapper.reveal { opacity: 1; transform: translateY(0); }
-
-        /* Use these classes to align left or right based on who sent it */
         .her { align-self: flex-start; }
         .me { align-self: flex-end; }
 
@@ -58,6 +73,8 @@
             border-radius: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.15);
             display: block;
+            /* Mobile hack: Ensure wide Mac screenshots don't look tiny */
+            object-fit: contain;
         }
 
         footer { padding: 80px 20px; text-align: center; color: var(--wa-meta); font-size: 14px; font-style: italic; }
@@ -65,9 +82,17 @@
 </head>
 <body>
 
+<div id="lock-screen">
+    <div style="font-size: 40px;">🔒</div>
+    <h2>WhatsApp Archive</h2>
+    <p>Please enter the passcode</p>
+    <input type="password" id="password-input" placeholder="••••••">
+    <button id="unlock-btn" onclick="checkPassword()">Unlock</button>
+</div>
+
 <header>
     <div class="user-info">
-        <div class="name">Saved for You</div>
+        <div class="name">Saved for You ❤️</div>
         <div class="status">online</div>
     </div>
 </header>
@@ -76,14 +101,14 @@
 
     <div class="date-badge">Oct 14</div>
     <div class="moment-wrapper her">
-        <img src="assets/1.png" alt="Memory">
+        <img src="Assets/1.png" alt="Memory">
     </div>
 
     <div class="date-badge">Nov 02</div>
     <div class="moment-wrapper me">
-        <img src="assets/2.png" alt="Memory">
+        <img src="Assets/2.png" alt="Memory">
     </div>
-
+    
     </div>
 
 <footer>
@@ -91,15 +116,33 @@
 </footer>
 
 <script>
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('reveal');
-            }
-        });
-    }, { threshold: 0.1 });
+    function checkPassword() {
+        const pass = document.getElementById('password-input').value;
+        if (pass === '110895') {
+            document.getElementById('lock-screen').style.display = 'none';
+            document.body.style.display = 'flex';
+            initObserver();
+        } else {
+            alert('Incorrect passcode. Hint: A special date?');
+        }
+    }
 
-    document.querySelectorAll('.moment-wrapper').forEach(m => observer.observe(m));
+    function initObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.moment-wrapper').forEach(m => observer.observe(m));
+    }
+
+    // Allow "Enter" key for password
+    document.getElementById('password-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') checkPassword();
+    });
 </script>
 
 </body>
