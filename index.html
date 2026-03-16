@@ -1,149 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Our Starred Moments ❤️</title>
-    <style>
-        :root {
-            --wa-bg: #efeae2;
-            --wa-header: #008069;
-            --wa-meta: #667781;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Saved Moments ❤️</title>
+    <style>
+        :root {
+            --wa-bg: #efeae2;
+            --wa-header: #008069;
+            --wa-meta: #667781;
+        }
 
-        /* Password Overlay - This stays visible */
-        #lock-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #008069; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; font-family: -apple-system, sans-serif;
-            transition: opacity 0.5s ease;
-        }
-        
-        #password-input {
-            padding: 15px; border-radius: 12px; border: none; margin-top: 25px;
-            width: 220px; text-align: center; font-size: 20px; letter-spacing: 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); outline: none;
-        }
-        
-        #unlock-btn {
-            margin-top: 20px; padding: 12px 35px; border-radius: 25px;
-            border: 2px solid white; background: transparent; color: white;
-            cursor: pointer; font-weight: 600; font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        #unlock-btn:active { background: white; color: #008069; }
+        /* Lock Screen Styles */
+        #lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--wa-header); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; font-family: -apple-system, sans-serif;
+            transition: opacity 0.5s ease;
+        }
+        #password-input {
+            padding: 15px; border-radius: 12px; border: none; margin-top: 25px;
+            width: 220px; text-align: center; font-size: 20px; letter-spacing: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); outline: none;
+        }
+        #unlock-btn {
+            margin-top: 20px; padding: 12px 35px; border-radius: 25px;
+            border: 2px solid white; background: transparent; color: white;
+            cursor: pointer; font-weight: 600; font-size: 16px; transition: all 0.3s ease;
+        }
+        #unlock-btn:active { background: white; color: var(--wa-header); }
 
-        /* Main Content - Hidden by default */
-        #main-content {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            background-color: var(--wa-bg);
-            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
-            background-blend-mode: overlay;
-        }
+        /* Main Content - Hidden by default */
+        #main-content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--wa-bg);
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            background-blend-mode: overlay;
+        }
 
-        body { margin: 0; padding: 0; font-family: -apple-system, sans-serif; background: var(--wa-bg); }
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--wa-bg); }
 
-        header {
-            background: var(--wa-header); color: white; width: 100%;
-            padding: 12px 16px; position: sticky; top: 0; z-index: 1000;
-            display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        header {
+            background: var(--wa-header); color: white; width: 100%;
+            padding: 12px 16px; position: sticky; top: 0; z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between; /* Perfect Alignment */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-center { text-align: center; }
+        .user-info .name { font-weight: 600; font-size: 18px; }
+        .user-info .status { font-size: 13px; opacity: 0.9; }
 
-        .chat-container { width: 100%; max-width: 500px; padding: 10px; display: flex; flex-direction: column; }
+        /* Tiny Music Surprise Icon */
+        #play-surprise-btn {
+            background: transparent; border: none; color: white; cursor: pointer;
+            font-size: 22px; opacity: 0.8; padding: 0; transition: opacity 0.3s ease;
+        }
+        #play-surprise-btn:hover { opacity: 1; }
 
-        .date-badge {
-            align-self: center; background: rgba(255, 255, 255, 0.9);
-            padding: 6px 12px; border-radius: 8px; font-size: 11px;
-            color: var(--wa-meta); box-shadow: 0 1px 0.5px rgba(0,0,0,0.1);
-            margin: 35px 0 15px 0; text-transform: uppercase;
-        }
+        .chat-container { width: 100%; max-width: 500px; padding: 10px 10px 50px 10px; display: flex; flex-direction: column; }
 
-        .moment-wrapper {
-            max-width: 95%; margin-bottom: 15px;
-            opacity: 0; transform: translateY(20px);
-            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        .date-badge {
+            align-self: center; background: rgba(255, 255, 255, 0.9);
+            padding: 6px 12px; border-radius: 8px; font-size: 11px;
+            color: var(--wa-meta); box-shadow: 0 1px 0.5px rgba(0,0,0,0.1);
+            margin: 35px 0 15px 0; text-transform: uppercase;
+        }
 
-        .moment-wrapper.reveal { opacity: 1; transform: translateY(0); }
-        .her { align-self: flex-start; }
-        .me { align-self: flex-end; }
+        /* High Fidelity Chat Bubble Logic */
+        .moment-wrapper {
+            max-width: 90%; margin-bottom: 25px; /* Spacing */
+            opacity: 0; transform: translateY(20px);
+            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column;
+        }
+        .moment-wrapper.reveal { opacity: 1; transform: translateY(0); }
+        .her { align-self: flex-start; }
+        .me { align-self: flex-end; }
 
-        .moment-wrapper img {
-            width: 100%; border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: block;
-        }
+        /* Creating the actual bubble effect */
+        .message-bubble {
+            border-radius: 12px; overflow: hidden;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+            background: #FFFFFF; /* Received default */
+            border: 1px solid #FFFFFF;
+            padding: 2px;
+            position: relative;
+        }
+        .me .message-bubble { background: #DCF8C6; border-color: #DCF8C6; }
 
-        footer { padding: 80px 20px; text-align: center; color: var(--wa-meta); font-size: 14px; }
-    </style>
+        /* Key Aesthetic Fix for landscape screengrabs on portrait mobile */
+        .message-bubble img {
+            width: 100%; border-radius: 8px; display: block;
+        }
+
+        /* The Mobile Zoom Trick - applies only on portrait screens */
+        @media (orientation: portrait) {
+            .message-bubble img.mobile-zoom {
+                transform: scale(2); /* Zoom into the content */
+                transform-origin: top left;
+                margin-bottom: -100%; /* Prevents breaking the layout flow */
+            }
+        }
+
+        .personal-note {
+            font-size: 13px; color: #7a6e71; font-style: italic;
+            margin-top: 8px; text-align: center; max-width: 80%;
+            align-self: center; /* Center notes */
+        }
+
+        footer { padding: 80px 20px 20px 20px; text-align: center; color: var(--wa-meta); font-size: 15px; font-weight: 500; font-style: italic;}
+    </style>
 </head>
 <body>
 
 <div id="lock-screen">
-    <div style="font-size: 50px; margin-bottom: 10px;">🔒</div>
-    <h2 style="margin: 0; font-weight: 500;">Archive Locked</h2>
-    <p style="opacity: 0.9; font-size: 14px;">Enter the passcode to view our chats</p>
-    <input type="password" id="password-input" inputmode="numeric" placeholder="••••••">
-    <button id="unlock-btn" onclick="checkPassword()">Unlock Archive</button>
+    <div style="font-size: 50px; margin-bottom: 10px;">🔒</div>
+    <h2 style="margin: 0; font-weight: 500;">Archive Locked</h2>
+    <p style="opacity: 0.9; font-size: 14px;">Enter the passcode to view our chats</p>
+    <input type="password" id="password-input" inputmode="numeric" placeholder="••••••">
+    <button id="unlock-btn" onclick="checkPassword()">Unlock Archive</button>
 </div>
 
+<audio id="surprise-song" src="PLACEHOLDER_LINK_TO_A_SONG.mp3" loop></audio>
+
 <div id="main-content">
-    <header>
-        <div style="font-weight: 600;">Saved for You ❤️</div>
-    </header>
+    <header>
+        <div class="header-center">
+            <div class="name">Saved for You ❤️</div>
+            <div class="status">online</div>
+        </div>
+        <button id="play-surprise-btn" onclick="toggleMusic()">🎵</button>
+    </header>
 
-    <div class="chat-container">
-        <div class="date-badge">Oct 14</div>
-        <div class="moment-wrapper her">
-            <img src="Assets/1.png" alt="Memory">
-        </div>
+    <div class="chat-container">
+                <div class="date-badge">Oct 14</div>
+        <div class="moment-wrapper her">
+            <div class="message-bubble">
+                <img src="Assets/1.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">When we first decided on that trip...</div>
+        </div>
 
-        <div class="date-badge">Nov 02</div>
-        <div class="moment-wrapper me">
-            <img src="Assets/2.png" alt="Memory">
-        </div>
+                <div class="date-badge">Oct 28</div>
+        <div class="moment-wrapper me">
+            <div class="message-bubble">
+                <img src="Assets/2.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">This meant the world to me.</div>
+        </div>
 
-        </div>
+                <div class="date-badge">Nov 02</div>
+        <div class="moment-wrapper her">
+            <div class="message-bubble">
+                <img src="Assets/3.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">The night of the play.</div>
+        </div>
 
-    <footer>
-        <p>Because some things are too good to lose. ❤️</p>
-    </footer>
+        <div class="date-badge">Nov 15</div>
+        <div class="moment-wrapper me">
+            <div class="message-bubble">
+                <img src="Assets/4.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">A new beginning.</div>
+        </div>
+
+        <div class="date-badge">Nov 23</div>
+        <div class="moment-wrapper her">
+            <div class="message-bubble">
+                <img src="Assets/5.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">When you sent me that picture.</div>
+        </div>
+
+        <div class="date-badge">Dec 01</div>
+        <div class="moment-wrapper me">
+            <div class="message-bubble">
+                <img src="Assets/6.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">My favorite joke of yours.</div>
+        </div>
+
+        <div class="date-badge">Dec 05</div>
+        <div class="moment-wrapper her">
+            <div class="message-bubble">
+                <img src="Assets/7.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">A deep talk.</div>
+        </div>
+
+        <div class="date-badge">Dec 10</div>
+        <div class="moment-wrapper me">
+            <div class="message-bubble">
+                <img src="Assets/8.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">When we laughed for an hour.</div>
+        </div>
+
+        <div class="date-badge">Dec 12</div>
+        <div class="moment-wrapper her">
+            <div class="message-bubble">
+                <img src="Assets/9.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">The day you knew.</div>
+        </div>
+
+        <div class="date-badge">Dec 14</div>
+        <div class="moment-wrapper me">
+            <div class="message-bubble">
+                <img src="Assets/10.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">The first "I love you".</div>
+        </div>
+
+        <div class="date-badge">Dec 15</div>
+        <div class="moment-wrapper her">
+            <div class="message-bubble">
+                <img src="Assets/11.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">Our favorite song.</div>
+        </div>
+
+        <div class="date-badge">Dec 20</div>
+        <div class="moment-wrapper me">
+            <div class="message-bubble">
+                <img src="Assets/12.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">Looking forward.</div>
+        </div>
+
+        <div class="date-badge">Dec 25</div>
+        <div class="moment-wrapper her">
+            <div class="message-bubble">
+                <img src="Assets/13.png" alt="Memory" class="mobile-zoom">
+            </div>
+            <div class="personal-note">Merry Christmas. You make every day a gift.</div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Everything else might be gone, but I’ve kept the parts that make me smile. Always. ❤️</p>
+    </footer>
 </div>
 
 <script>
-    function checkPassword() {
-        const pass = document.getElementById('password-input').value;
-        if (pass === '110895') {
-            document.getElementById('lock-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('lock-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'flex';
-                initObserver();
-            }, 500);
-        } else {
-            alert('Wrong passcode. Try a special date?');
-            document.getElementById('password-input').value = '';
-        }
-    }
+    function checkPassword() {
+        const pass = document.getElementById('password-input').value;
+        if (pass === '110895') {
+            document.getElementById('lock-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('lock-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'flex';
+                initObserver();
+                // Start music quietly if she unlocks with a gift
+                startMusic();
+            }, 500);
+        } else {
+            alert('Incorrect passcode. Try a special date?');
+            document.getElementById('password-input').value = '';
+        }
+    }
 
-    function initObserver() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('reveal');
-                }
-            });
-        }, { threshold: 0.1 });
+    function initObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal');
+                }
+            });
+        }, { threshold: 0.1 });
 
-        document.querySelectorAll('.moment-wrapper').forEach(m => observer.observe(m));
-    }
+        document.querySelectorAll('.moment-wrapper').forEach(m => observer.observe(m));
+}
 
-    document.getElementById('password-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') checkPassword();
-    });
+    // Music Surprise Control
+    const audio = document.getElementById('surprise-song');
+    const btn = document.getElementById('play-surprise-btn');
+
+    function startMusic() {
+        audio.volume = 0.5; // Starts at 50% volume
+        audio.play().then(() => {
+            btn.textContent = '⏸️'; // Change icon to pause
+            btn.title = 'Pause the song';
+        }).catch(() => {
+            // If autoplay fails, it's fine. The button will still work.
+            btn.textContent = '🎵';
+        });
+    }
+
+    function toggleMusic() {
+        if (audio.paused) {
+            audio.play();
+            btn.textContent = '⏸️';
+        } else {
+            audio.pause();
+            btn.textContent = '🎵';
+        }
+    }
+
+    document.getElementById('password-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') checkPassword();
+    });
 </script>
 
 </body>
